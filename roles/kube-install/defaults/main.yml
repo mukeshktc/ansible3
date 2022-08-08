@@ -1,0 +1,6 @@
+---
+# defaults file for kube-install
+kube_package:
+- kubeadm=1.22.0-00 
+- kubectl=1.22.0-00 
+- kubelet=1.22.0-00

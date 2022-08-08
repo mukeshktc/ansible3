@@ -1,0 +1,4 @@
+- hosts: workers
+  name: join in the cluster
+  roles:
+  - roles/kube-worker

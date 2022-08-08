@@ -1,0 +1,5 @@
+---
+# tasks file for kube-worker
+- name: run join commands on worker nodes
+  script: join-command.sh
+  become: yes

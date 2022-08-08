@@ -1,0 +1,33 @@
+---
+# tasks file for kube-install
+- name: update apt cache
+  apt:
+    update_cache: yes
+- name: install dependencies
+  apt:
+    name: "{{ item }}"    
+    state: present
+  with_items:
+  - apt-transport-https
+  - ca-certificates
+  - curl
+- name: install apt key
+  apt_key:
+    url: "https://packages.cloud.google.com/apt/doc/apt-key.gpg"
+    state: present 
+- name: install apt repo for kubernetes
+  apt_repository:
+    repo: deb https://apt.kubernetes.io/ kubernetes-xenial main
+    state: present
+    filename: kubernetes.list
+- name: update apt cache 
+  apt:
+    update_cache: yes
+- name: Installing Kubeadm kubectl kubelet
+  apt:
+    name: "{{ kube_package }}"
+    state: present
+- name: marking package versions
+  command: apt-mark hold kubelet kubeadm kubectl
+      
+

@@ -1,0 +1,27 @@
+---
+# tasks file for kube-cluster
+- name: Initializing cluster on kubernetes master
+  command: kubeadm init --apiserver-advertise-address=172.31.7.255 --pod-network-cidr=192.168.0.0/16 --ignore-preflight-errors=all
+  become: yes 
+- name: configuring kube master node for ubuntu user
+  command: "{{ item }}"
+  with_items:
+  - mkdir -p $HOME/.kube
+  - sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+  - sudo chown ubuntu:ubuntu $HOME/.kube/config
+- name: installing calico network
+  command: "{{ item }}"
+  with_items:
+  - kubectl create -f https://docs.projectcalico.org/manifests/tigera-operator.yaml
+  - wget https://docs.projectcalico.org/manifests/custom-resources.yaml
+  - kubectl create -f custom-resources.yaml
+- name:
+  command: sleep 80
+- name: untainting master
+  command: kubectl taint nodes --all node-role.kubernetes.io/master-
+- name: generating join token on master
+  command: kubeadm token create --print-join-command
+  register: join_command
+- name: saving join command into a file
+  local_action: copy content="{{ join_command.stdout_lines[0] }}" dest="./join-command.sh"      
+    

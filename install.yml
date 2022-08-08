@@ -1,0 +1,10 @@
+- hosts: all
+  name: Installing docker and kubernetes
+  become: true
+  roles:
+  - roles/docker
+  - roles/kube-install
+- hosts: master
+  name: configuring and initializing cluster
+  roles:
+  - roles/kube-cluster  
